@@ -11,7 +11,7 @@ People always think they know what countries invest in what sustainable energy, 
 I want to make a visualization of a world map which gives insight in the investments countries make in sustainble energy.
 
 #### Features
-##### MVP
+**MVP**
 * A world map 
 * The amount of money a country invests in sustainable energy per year
 * What techniques the money is invested in
@@ -19,7 +19,7 @@ I want to make a visualization of a world map which gives insight in the investm
 * The option to chose one technique to see in the world map
 * The option to see graphs to represent the growth over the years
 
-##### Optional
+**Optional**
 * A globe 
 * The GDP of the country
 * What the potentials of the country would be in terms of sustainable energy
