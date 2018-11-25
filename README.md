@@ -1,4 +1,4 @@
-# Project CO2
+# Project Sustainable Energy Visualization
 Name: Xandra Vos
 
 ### Summary
@@ -11,7 +11,6 @@ People always think they know what countries invest in what sustainable energy, 
 I want to make a visualization of a world map which gives insight in the investments countries make in sustainble energy.
 
 #### Features
-
 ##### MVP
 * A world map 
 * The amount of money a country invests in sustainable energy per year
