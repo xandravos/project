@@ -1,6 +1,6 @@
 # Project Minor Programming
 ## Sustainable energy map
-Name: Xandra Vos
+Name: Xandra Vos  
 Studentnumber: 10731148
 
 ### Summary
@@ -14,7 +14,7 @@ countries on the total energy consumption. That's why I want to summarize
 this in a visualization.
 
 ### Solution
-**Summary**
+**Summary**  
 I want to make a visualization with a world map which gives insight in the share
 of renewable energy consumption on the total energy consumption of EU countries.
 
