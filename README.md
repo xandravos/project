@@ -19,6 +19,7 @@ I want to make a visualization with a world map which gives insight in the share
 of renewable energy consumption on the total energy consumption of EU countries.
 
 **Visual sketch**
+https://github.com/xandravos/project/files/2732918/Presentatie1.pdf
 
 
 #### Features
