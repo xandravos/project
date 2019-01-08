@@ -2,7 +2,7 @@
 
 ## Data sources
 The data source I will use is the following:  
-![Eurostat - Share of renewable energy in gross final energy consumption by sector](https://ec.europa.eu/eurostat/tgm/refreshTableAction.do?tab=table&plugin=1&pcode=sdg_07_40&language=en)
+[Eurostat - Share of renewable energy in gross final energy consumption by sector](https://ec.europa.eu/eurostat/tgm/refreshTableAction.do?tab=table&plugin=1&pcode=sdg_07_40&language=en)
 
 To make the map, I will have to parse the data in such a way that the years are
 the first dictionary key. This makes it possible to use the slider. The second
