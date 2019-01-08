@@ -21,6 +21,7 @@ make a stacked line graph of all sectors.
 ## Diagram with overview of technical components
 
 
+
 ## Descriptions of each of the components and whats needed to implement
 The top navigation bar is the first component. The homepage will have my
 information and a small explanation about the visualization. The visualization
