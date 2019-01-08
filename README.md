@@ -18,7 +18,8 @@ this in a visualization.
 I want to make a visualization with a world map which gives insight in the share
 of renewable energy consumption on the total energy consumption of EU countries.
 
-**Visual sketch**
+**Visual sketch**  
+![sketch](https://user-images.githubusercontent.com/44001399/50771338-a5ebed80-128a-11e9-9ecc-802a20773714.jpeg)
 
 
 #### Features
