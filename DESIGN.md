@@ -19,7 +19,7 @@ selected. A line graph will be made with this information. A possibility is to
 make a stacked line graph of all sectors.
 
 ## Diagram with overview of technical components
-<img width="932" alt="schermafbeelding 2019-01-08 om 16 23 57" src="https://user-images.githubusercontent.com/44001399/50840035-e4a0a700-1361-11e9-8a6e-d2a018157820.png">
+![sketch](https://github.com/xandravos/project/blob/master/doc/designsketch.png)
 
 
 ## Descriptions of each of the components and whats needed to implement
