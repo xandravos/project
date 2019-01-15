@@ -14,10 +14,13 @@ HTML file to post on the local host page.
         <!-- <link rel="stylesheet" type="text/css" href="visualization.css"> -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script type="text/javascript" src="d3/d3.js"></script>
+        <script src="d3/d3.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script src="visualization.js"></script>
+        <script src="http://d3js.org/d3.v5.min.js"></script>
+        <script src="http://d3js.org/queue.v1.min.js"></script>
         <script src="http://d3js.org/topojson.v1.min.js"></script>
+        <script src="d3-tip.js"></script>
+        <script src="visualization.js" charset="utf-8"></script>
 
     </head>
 
@@ -29,20 +32,12 @@ HTML file to post on the local host page.
                     </div>
                     <ul class="nav navbar-nav">
                         <li><a href="http://localhost:8080/project.html">Home</a></li>
-                        <li class="active"><a href="/visualization">Visualization</a></li>
+                        <li class="active"><a href="/visualization.html">Visualization</a></li>
                         <li><a href="http://localhost:8080/about.html">About</a></li>
                     </ul>
                 </div>
             </nav>
-                <div id="map"></div>
-
-        <script>
-            var map = d3.geomap()
-                    .geofile('europe.json')
-                    .draw(d3.select('#map'));
-
-        </script>
-
+                <!-- <div id="map"></div> -->
         <!-- <div class="container">
             <div class="row">
 
@@ -57,8 +52,6 @@ HTML file to post on the local host page.
             </div>
           </div>
         </div> -->
-
-
         <!-- <div id='container-fluid'></div> -->
     </body>
 </html>
