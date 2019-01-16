@@ -14,9 +14,21 @@ window.onload = function() {
 
     // executes a function
     Promise.all(requests).then(function(response) {
-        // var data = response[1];
-        var countries = response[0]
+        var dataRen = response[1];
+        var countries = response[0];
+        console.log(dataRen)
+        var years = Object.keys(dataRen)
+        console.log(years)
 
+        makeMap(countries)
+
+
+}).catch(function(e){
+    throw(e);
+});
+};
+
+function makeMap(countries) {
     // Set tooltips
     var tip = d3.tip()
                 .attr('class', 'd3-tip')
@@ -43,19 +55,15 @@ window.onload = function() {
                 .attr('id', 'worldmap');
 
     var projection = d3.geoMercator()
-                       .scale(440)
-                      .translate( [width / 2 - 50, height + 480 / 1.5]);
+                       .scale(460)
+                      .translate( [width / 2 - 70, height + 480 / 1.5]);
 
     var path = d3.geoPath().projection(projection);
 
     svg.call(tip);
 
     ready(countries, path, tip)
-
-}).catch(function(e){
-    throw(e);
-});
-};
+}
 
 function ready(data, path, tip) {
     svg = d3.selectAll("#worldmap")
@@ -86,11 +94,14 @@ function ready(data, path, tip) {
                 .style("opacity", 0.8)
                 .style("stroke","white")
                 .style("stroke-width",0.3);
-            });
-
-      svg.append("path")
-          .datum(topojson.mesh(data.features, function(a, b) { return a.id !== b.id; }))
-           // .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
-          .attr("class", "names")
-          .attr("d", path);
+            })
+            // .on("click", function(d, i) {
+            //     makePie(menWomen[i])
+            // });
+      //
+      // svg.append("path")
+      //     .datum(topojson.mesh(data.features, function(a, b) { return a.id !== b.id; }))
+      //      .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))
+      //     .attr("class", "names")
+      //     .attr("d", path);
     }
