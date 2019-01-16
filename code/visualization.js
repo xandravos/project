@@ -10,13 +10,12 @@ window.onload = function() {
     var data = "https://raw.githubusercontent.com/xandravos/project/master/code/data.json"
 
     var requests = [d3.json(jsonEurope), d3.json(data)];
+    var format = d3.format(",");
 
     // executes a function
     Promise.all(requests).then(function(response) {
-        // console.log(response[0])
         // var data = response[1];
-
-        var format = d3.format(",");
+        var countries = response[0]
 
     // Set tooltips
     var tip = d3.tip()
@@ -27,7 +26,7 @@ window.onload = function() {
                 })
 
     var margin = {top: 0, right: 0, bottom: 0, left: 0},
-                width = 960 - margin.left - margin.right,
+                width = 500 - margin.left - margin.right,
                 height = 500 - margin.top - margin.bottom;
 
     var color = d3.scaleThreshold()
@@ -36,26 +35,31 @@ window.onload = function() {
 
     var path = d3.geoPath();
 
-    var svg = d3.select("body")
+    var svg = d3.select("#map")
                 .append("svg")
                 .attr("width", width)
                 .attr("height", height)
                 .append('g')
-                .attr('class', 'map');
+                .attr('id', 'worldmap');
 
     var projection = d3.geoMercator()
-                       .scale(130)
-                      .translate( [width / 2, height / 1.5]);
+                       .scale(440)
+                      .translate( [width / 2 - 50, height + 480 / 1.5]);
 
     var path = d3.geoPath().projection(projection);
 
     svg.call(tip);
 
+    ready(countries, path, tip)
 
-    function ready(error, data, population) {
+}).catch(function(e){
+    throw(e);
+});
+};
 
-
-      svg.append("g")
+function ready(data, path, tip) {
+    svg = d3.selectAll("#worldmap")
+    svg.append("g")
           .attr("class", "countries")
         .selectAll("path")
           .data(data.features)
@@ -90,7 +94,3 @@ window.onload = function() {
           .attr("class", "names")
           .attr("d", path);
     }
-    }).catch(function(e){
-        throw(e);
-    });
-};
