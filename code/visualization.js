@@ -3,6 +3,15 @@ Name: Xandra Vos
 Studentnumber: 10731148
 */
 
+var country = "Belgium"
+var marginMap = {top: 0, right: 0, bottom: 0, left: 0}
+var widthMap = 500 - marginMap.left - marginMap.right
+var heightMap = 500 - marginMap.top - marginMap.bottom;
+
+var marginLine = {top: 50, right: 50, bottom: 50, left: 50};
+var widthLine = 700 - marginLine.left - marginLine.right;
+var heightLine = 400 - marginLine.top - marginLine.bottom;
+
 window.onload = function() {
 
     // requests both queries and waits till all requests are fulfilled
@@ -14,14 +23,18 @@ window.onload = function() {
 
     // executes a function
     Promise.all(requests).then(function(response) {
-        var allData = prepareDataLine(response);
-        var linechartList = allData[0];
-        var years = allData[1];
-        var countries = response[0];
+        var jsonEurope = response[0];
+        var dataJSON = response[1];
 
-        makeMap(countries)
+        var lineData = prepareDataLine(dataJSON, country);
+        var linechartList = lineData[0];
+        var years = lineData[1];
 
-        makeLineChart(linechartList, years)
+        makeMap(jsonEurope, dataJSON);
+
+        // makeDropdown(countries)
+
+        makeLineChart(linechartList, years);
 
         // makeDonutChart(year, country)
 
@@ -30,116 +43,161 @@ window.onload = function() {
 });
 };
 
-function makeLineChart(data, years) {
+function updateLine(linechartList, years) {
 
-    console.log(data)
-
-    var margin = {top: 50, right: 50, bottom: 50, left: 50}
-    var width = 700 - margin.left - margin.right
-    var height = 400 - margin.top - margin.bottom;
-
-    var minValue = d3.min(data)
-    var maxValue = d3.max(data)
-    var minYear = d3.min(years)
-    var maxYear = d3.max(years)
+    var minValue = d3.min(linechartList);
+    var maxValue = d3.max(linechartList);
+    var minYear = d3.min(years);
+    var maxYear = d3.max(years);
 
     var xScale = d3.scaleLinear()
                    .domain([minYear, maxYear])
-                   .range([0, width]);
+                   .range([0, widthLine]);
 
     var yScale = d3.scaleLinear()
-                   .domain([minValue, maxValue])
-                   .range([height, 0]);
+                   .domain([0, 100])
+                   .range([heightLine, 50]);
 
     var line = d3.line()
                  .x(function(d, i) {
-                     console.log(d)
-                     console.log(years[i])
-                     return xScale(years[i])})
-                 .y(function(d) { return yScale(d)});
-    //
-    // xScale.domain(d3.extent(years, function(d) { return +d}));
-    // yScale.domain(d3.extent(data, function(d) { return +d }));
+                     return xScale(years[i])
+                 })
+                 .y(function(d) {
+                     return yScale(d)
+                 });
 
-// 8. An array of objects of length N. Each object has key -> value pair, the key being "y" and the value is a random number
-// var dataset = d3.range(n).map(function(d) { return {"y": d3.randomUniform(1)() } })
+    var newLine = d3.select(".linegraph").datum(linechartList);
+    newLine.transition()
+        .duration(250)
+        .attr("d", line)
+        .style("fill", "none")
+        .style("stroke", "black");
 
-var svg = d3.select("body")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var newDots = d3.selectAll(".dot").data(linechartList);
+    newDots.transition()
+           .duration(250)
+           .attr("d", line)
+           .attr("cx", function(d, i) { return xScale(years[i]) })
+           .attr("cy", function(d) { return yScale(d) })
+           .attr("r", 5)
 
-// 3. Call the x axis in a group tag
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(xScale).tickFormat(d3.format(""))); // Create an axis component with d3.axisBottom
-
-// 4. Call the y axis in a group tag
-svg.append("g")
-    .attr("class", "y axis")
-    .call(d3.axisLeft(yScale)); // Create an axis component with d3.axisLeft
-
-// 9. Append the path, bind the data, and call the line generator
-svg.append("path")
-    .datum(data) // 10. Binds data to the line
-    .attr("class", "line") // Assign a class for styling
-    .attr("d", line); // 11. Calls the line generator
-
-// 12. Appends a circle for each datapoint
-// svg.selectAll(".dot")
-//     .data(data)
-//   .enter().append("circle") // Uses the enter().append() method
-//     .attr("class", "dot") // Assign a class for styling
-//     .attr("cx", function(d, i) { return xScale(i) })
-//     .attr("cy", function(d) { return yScale(d.y) })
-//     .attr("r", 5)
-//       .on("mouseover", function(a, b, c) {
-//   			console.log(a)
-//         this.attr('class', 'focus')
-// 		})
-//       .on("mouseout", function() {  })
 }
 
-function prepareDataLine(data) {
-    var country = "Belgium";
-    var dataEn = data[1];
-    var countries = data[0];
+function makeLineSVG() {
+    var svg = d3.select("#lineGraph")
+                .append("svg")
+                .attr("width", widthLine + marginLine.left + marginLine.right)
+                .attr("height", heightLine + marginLine.top + marginLine.bottom)
+                .append("g")
+                .attr("transform", "translate(" + marginLine.left + "," + marginLine.top + ")");
 
+    return svg;
+}
+
+function makeMapSVG() {
+
+    var svg = d3.select("#map")
+                .append("svg")
+                .attr("width", widthMap)
+                .attr("height", heightMap)
+                .append("g")
+                .attr("id", "worldmap");
+
+    return svg;
+};
+
+function makeLineChart(data, years) {
+
+    var heightSVG = 400;
+    var widthSVG = 700;
+
+    var minValue = d3.min(data);
+    var maxValue = d3.max(data);
+    var minYear = d3.min(years);
+    var maxYear = d3.max(years);
+
+    var svg = makeLineSVG();
+
+    var xScale = d3.scaleLinear()
+                   .domain([minYear, maxYear])
+                   .range([0, widthLine]);
+
+    var yScale = d3.scaleLinear()
+                   .domain([0, 100])
+                   .range([heightLine, 50]);
+
+    var line = d3.line()
+                 .x(function(d, i) {
+                     return xScale(years[i])
+                 })
+                 .y(function(d) {
+                     return yScale(d)
+                 });
+
+    // Call the x axis
+    svg.append("g")
+       .attr("class", "x axis")
+       .attr("transform", "translate(0," + heightLine + ")")
+       .call(d3.axisBottom(xScale).tickFormat(d3.format("")));
+
+    // Call the y axis
+    svg.append("g")
+       .attr("class", "y axis")
+       .call(d3.axisLeft(yScale));
+
+    // Append the path, bind the data, and call the line generator
+    svg.append("path")
+       .datum(data)
+       .attr("class", "linegraph")
+       .attr("d", line)
+       .style("fill", "none")
+       .style("stroke", "black");
+
+    // Appends a circle for each datapoint
+    svg.selectAll(".dot")
+       .data(data)
+       .enter().append("circle")
+       .attr("class", "dot")
+       .attr("cx", function(d, i) { return xScale(years[i]) })
+       .attr("cy", function(d) { return yScale(d) })
+       .attr("r", 5)
+       .on("mouseover", function(a, b, c) {
+  			// console.log(a)
+            // console.log(b)
+            // console.log(c)
+            return "<strong>Country: </strong><span class='details'>" + "Belgium" + "<br></span>" + "<strong>Percentage:" + b + "</strong><span class='details'></span>";
+    	})
+        .on("mouseout", function() {  })
+}
+
+function prepareDataLine(data, country) {
+    var dataEn = data;
     var years = Object.keys(dataEn);
     var countriesData = Object.values(dataEn);
 
     linechartList = []
     countriesData.forEach(function(d, i) {
-        valueTot = d[country]["Share of renewable energy in gross final energy consumption"]
-
-        valueTot.replace(",", ".")
-        console.log(d[country]["Share of renewable energy in gross final energy consumption"])
         linechartList.push(d[country]["Share of renewable energy in gross final energy consumption"])
     });
 
     return [linechartList, years];
-
 }
 
 function makeDonutChart() {
 
 }
 
-function makeMap(countries) {
+function makeMap(countries, dataJSON) {
     // Set tooltips
     var tip = d3.tip()
-                .attr('class', 'd3-tip')
+                .attr("class", "d3-tip")
                 .offset([-10, 0])
                 .html(function(d) {
                   return "<strong>Country: </strong><span class='details'>" + d.properties.NAME + "<br></span>" + "<strong>Population: </strong><span class='details'></span>";
                 })
 
-    var margin = {top: 0, right: 0, bottom: 0, left: 0},
-                width = 500 - margin.left - margin.right,
-                height = 500 - margin.top - margin.bottom;
+
+    var svg = makeMapSVG();
 
     var color = d3.scaleThreshold()
         .domain([10000,100000,500000,1000000,5000000,10000000,50000000,100000000,500000000,1500000000])
@@ -147,62 +205,57 @@ function makeMap(countries) {
 
     var path = d3.geoPath();
 
-    var svg = d3.select("#map")
-                .append("svg")
-                .attr("width", width)
-                .attr("height", height)
-                .append('g')
-                .attr('id', 'worldmap');
-
     var projection = d3.geoMercator()
                        .scale(440)
-                      .translate( [width / 2 - 60, height + 300 / 1]);
+                       .translate( [widthMap / 2 - 60, heightMap + 300 / 1]);
 
     var path = d3.geoPath().projection(projection);
 
     svg.call(tip);
 
-    ready(countries, path, tip)
+    ready(countries, path, tip, dataJSON)
 }
 
-function ready(data, path, tip) {
+function ready(data, path, tip, dataJSON) {
 
     var eu = topojson.feature(data, data.objects.europe).features
 
     svg = d3.selectAll("#worldmap")
     svg.append("g")
-          .attr("class", "countries")
-        .selectAll("path")
-          .data(eu)
-        .enter().append("path")
-          .attr("d", path)
-          .style('stroke', 'white')
-          .style('stroke-width', 1.5)
-          .style("opacity",0.8)
-          // tooltips
-            .style("stroke","white")
-            .style('stroke-width', 0.3)
-            .on('mouseover',function(d){
-              tip.show(d);
+       .attr("class", "countries")
+       .selectAll("path")
+       .data(eu)
+       .enter().append("path")
+       .attr("d", path)
+       .style("stroke", "white")
+       .style("stroke-width", 1.5)
+       .style("opacity",0.8)
+       // tooltips
+       .style("stroke","white")
+       .style("stroke-width", 0.3)
+       .on("mouseover",function(d){
+           tip.show(d);
+           d3.select(this)
+             .style("opacity", 1)
+             .style("stroke","white")
+             .style("stroke-width",3);
+        })
+        .on('mouseout', function(d){
+            tip.hide(d);
+            d3.select(this)
+              .style("opacity", 0.8)
+              .style("stroke","white")
+              .style("stroke-width",0.3);
+        })
+        .on("click", function(d, i) {
+            console.log(d.properties.NAME)
+            var allData = prepareDataLine(dataJSON, d.properties.NAME)
+            var linechartList = allData[0]
+            var years = allData[1]
+            // makeLineChart(linechartList, years)
+            updateLine(linechartList, years)
+        });
 
-              d3.select(this)
-                .style("opacity", 1)
-                .style("stroke","white")
-                .style("stroke-width",3);
-            })
-            .on('mouseout', function(d){
-              tip.hide(d);
-
-              d3.select(this)
-                .style("opacity", 0.8)
-                .style("stroke","white")
-                .style("stroke-width",0.3);
-            })
-            // .on("click", function(d, i) {
-            //     makePie(menWomen[i])
-            //     makeLineChart()
-            // });
-      //
       // svg.append("path")
       //     .datum(topojson.mesh(data.features, function(a, b) { return a.id !== b.id; }))
       //      .datum(topojson.mesh(data.features, function(a, b) { return a !== b; }))

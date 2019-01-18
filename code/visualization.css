@@ -1,3 +1,8 @@
+
+body {
+    background-color: #f2f2f2
+}
+
 .names {
 fill: none;
 stroke: #fff;
@@ -63,9 +68,9 @@ stroke-linejoin: round;
     left: 100%;
   }
 
-/*    text{
+   /* text{
     pointer-events:none;
-  }*/
+  } */
 
   .details{
     color:white;
