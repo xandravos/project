@@ -25,7 +25,7 @@ World map finally works. This is not the one I want, because it is the whole
 world, but can't make the one work with only Europe in it. The one of the
 world is shown below.
 
-<!-- ![oldmap][] -->
+![oldmap][https://github.com/xandravos/project/blob/master/doc/oldworldmap.png]
 
 ## day 7 (17/1)
 I found a JSON file for Europe only, so I didn't have to zoom. A few changes
@@ -36,6 +36,12 @@ one that adjusts to the scale of the country. I chose the static one, because
 otherwise it will paint a sketchy picture of the differences between the
 countries.
 
-<!-- ![newmap][] -->
+![newmap][https://github.com/xandravos/project/blob/master/doc/neweumap.png]
 
 ## day 8 (18/1)
+I wanted to make it possible to click on a country and update the line graph, so
+the graph of the country that was clicked on appears. At first, it didn't work,
+but now the graph updates. The next step is the dropdown menu. This will also
+make it possible to select a country and update the line graph. My new
+choice is if I want a line to be present before selecting anything or having
+an empty graph.
