@@ -80,6 +80,7 @@ function updateLine(linechartList, years) {
            .attr("cx", function(d, i) { return xScale(years[i]) })
            .attr("cy", function(d) { return yScale(d) })
            .attr("r", 5)
+           .attr("fill", "#FFA500")
 
 }
 
@@ -193,7 +194,7 @@ function makeMap(countries, dataJSON) {
                 .attr("class", "d3-tip")
                 .offset([-10, 0])
                 .html(function(d) {
-                  return "<strong>Country: </strong><span class='details'>" + d.properties.NAME + "<br></span>" + "<strong>Population: </strong><span class='details'></span>";
+                  return "<strong>Country: </strong><span class='details'>" + d.properties.NAME + "<br></span>" + "<strong>Share of renewable energy: </strong><span class='details'>" + " %" + "</span>";
                 })
 
 
@@ -206,8 +207,8 @@ function makeMap(countries, dataJSON) {
     var path = d3.geoPath();
 
     var projection = d3.geoMercator()
-                       .scale(440)
-                       .translate( [widthMap / 2 - 60, heightMap + 300 / 1]);
+                       .scale(430)
+                       .translate( [widthMap / 2 - 60, heightMap + 270]);
 
     var path = d3.geoPath().projection(projection);
 
@@ -233,6 +234,9 @@ function ready(data, path, tip, dataJSON) {
        // tooltips
        .style("stroke","white")
        .style("stroke-width", 0.3)
+       // .style("fill", function(d){
+       //   if (d.properties.NAME !=   )
+       // })
        .on("mouseover",function(d){
            tip.show(d);
            d3.select(this)
