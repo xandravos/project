@@ -3,14 +3,26 @@ Name: Xandra Vos
 Studentnumber: 10731148
 */
 
-var country = "Belgium"
 var marginMap = {top: 0, right: 0, bottom: 0, left: 0}
 var widthMap = 500 - marginMap.left - marginMap.right
 var heightMap = 500 - marginMap.top - marginMap.bottom;
 
 var marginLine = {top: 50, right: 50, bottom: 50, left: 50};
-var widthLine = 700 - marginLine.left - marginLine.right;
-var heightLine = 400 - marginLine.top - marginLine.bottom;
+var widthLine = window.innerWidth - marginLine.left - marginLine.right - 200;
+var heightLine = window.innerHeight - marginLine.top - marginLine.bottom - 100;
+
+var minValue = 0;
+var maxValue = 100;
+var minYear = 2007;
+var maxYear = 2016;
+
+var xScale = d3.scaleLinear()
+               .domain([minYear, maxYear])
+               .range([0, widthLine]);
+
+var yScale = d3.scaleLinear()
+               .domain([minValue, maxValue])
+               .range([heightLine, marginLine.top]);
 
 window.onload = function() {
 
@@ -26,15 +38,19 @@ window.onload = function() {
         var jsonEurope = response[0];
         var dataJSON = response[1];
 
+        var country = "European Union (current composition)"
+
         var lineData = prepareDataLine(dataJSON, country);
         var linechartList = lineData[0];
         var years = lineData[1];
 
-        makeMap(jsonEurope, dataJSON);
+        makeMap(jsonEurope, dataJSON, years);
 
         // makeDropdown(countries)
 
         makeLineChart(linechartList, years);
+
+        dropDown(dataJSON)
 
         // makeDonutChart(year, country)
 
@@ -43,20 +59,68 @@ window.onload = function() {
 });
 };
 
+function makeSlider() {
+// Time
+  var dataTime = d3.range(0, 10).map(function(d) {
+    return new Date(1995 + d, 10, 3);
+  });
+
+  var sliderTime = d3
+    .sliderBottom()
+    .min(d3.min(dataTime))
+    .max(d3.max(dataTime))
+    .step(1000 * 60 * 60 * 24 * 365)
+    .width(300)
+    .tickFormat(d3.timeFormat('%Y'))
+    .tickValues(dataTime)
+    .default(new Date(1998, 10, 3))
+    .on('onchange', val => {
+      d3.select('p#value-time').text(d3.timeFormat('%Y')(val));
+    });
+
+  var gTime = d3
+    .select('div#slider-time')
+    .append('svg')
+    .attr('width', 500)
+    .attr('height', 100)
+    .append('g')
+    .attr('transform', 'translate(30,30)');
+
+  gTime.call(sliderTime);
+
+  d3.select('p#value-time').text(d3.timeFormat('%Y')(sliderTime.value()));
+}
+
+// function for dropdown menu
+function dropDown(dataJSON) {
+
+    var countries = ["European Union", "Belgium", "Germany"]
+
+    // make dropdown
+    var select = d3.select("#map")
+                   .append("select")
+  	               .attr("class","select")
+                   .on("change", onchange)
+
+    // fill dropdown with years as options
+    var options = select
+        .selectAll("option")
+	    .data(countries).enter()
+	    .append("option")
+		.text(function (d) { return d; })
+
+    // updategraph if other year chosen
+    function onchange() {
+    	var country = d3.select("select").property("value")
+        var allData = prepareDataLine(dataJSON, country)
+        var linechartList = allData[0]
+        var years = allData[1]
+        updateLine(linechartList, years)
+
+    };
+};
+
 function updateLine(linechartList, years) {
-
-    var minValue = d3.min(linechartList);
-    var maxValue = d3.max(linechartList);
-    var minYear = d3.min(years);
-    var maxYear = d3.max(years);
-
-    var xScale = d3.scaleLinear()
-                   .domain([minYear, maxYear])
-                   .range([0, widthLine]);
-
-    var yScale = d3.scaleLinear()
-                   .domain([0, 100])
-                   .range([heightLine, 50]);
 
     var line = d3.line()
                  .x(function(d, i) {
@@ -68,14 +132,14 @@ function updateLine(linechartList, years) {
 
     var newLine = d3.select(".linegraph").datum(linechartList);
     newLine.transition()
-        .duration(250)
+        .duration(500)
         .attr("d", line)
         .style("fill", "none")
         .style("stroke", "black");
 
     var newDots = d3.selectAll(".dot").data(linechartList);
     newDots.transition()
-           .duration(250)
+           .duration(500)
            .attr("d", line)
            .attr("cx", function(d, i) { return xScale(years[i]) })
            .attr("cy", function(d) { return yScale(d) })
@@ -112,20 +176,7 @@ function makeLineChart(data, years) {
     var heightSVG = 400;
     var widthSVG = 700;
 
-    var minValue = d3.min(data);
-    var maxValue = d3.max(data);
-    var minYear = d3.min(years);
-    var maxYear = d3.max(years);
-
     var svg = makeLineSVG();
-
-    var xScale = d3.scaleLinear()
-                   .domain([minYear, maxYear])
-                   .range([0, widthLine]);
-
-    var yScale = d3.scaleLinear()
-                   .domain([0, 100])
-                   .range([heightLine, 50]);
 
     var line = d3.line()
                  .x(function(d, i) {
@@ -162,11 +213,9 @@ function makeLineChart(data, years) {
        .attr("cx", function(d, i) { return xScale(years[i]) })
        .attr("cy", function(d) { return yScale(d) })
        .attr("r", 5)
+       .attr("fill", "#FFA500")
        .on("mouseover", function(a, b, c) {
-  			// console.log(a)
-            // console.log(b)
-            // console.log(c)
-            return "<strong>Country: </strong><span class='details'>" + "Belgium" + "<br></span>" + "<strong>Percentage:" + b + "</strong><span class='details'></span>";
+
     	})
         .on("mouseout", function() {  })
 }
@@ -188,21 +237,23 @@ function makeDonutChart() {
 
 }
 
-function makeMap(countries, dataJSON) {
+function makeMap(countries, dataJSON, years) {
+    // var amount = dataJSON["2007"][d.properties.NAME]["Share of renewable energy in gross final energy consumption"]
+
     // Set tooltips
     var tip = d3.tip()
                 .attr("class", "d3-tip")
                 .offset([-10, 0])
                 .html(function(d) {
-                  return "<strong>Country: </strong><span class='details'>" + d.properties.NAME + "<br></span>" + "<strong>Share of renewable energy: </strong><span class='details'>" + " %" + "</span>";
-                })
+                    if (dataJSON[minYear][d.properties.NAME] == undefined) {
+                        return "<strong>Country: </strong><span class='details'>" + d.properties.NAME + "<br></span>" + "<strong> No data available </strong><span class='details'></span>"
+                    } else {
+                        return "<strong>Country: </strong><span class='details'>" + d.properties.NAME + "<br></span>" + "<strong>Share of renewable energy: </strong><span class='details'>" + dataJSON["2007"][d.properties.NAME]["Share of renewable energy in gross final energy consumption"] + "%" + "</span>";
+                    }
+                });
 
 
     var svg = makeMapSVG();
-
-    var color = d3.scaleThreshold()
-        .domain([10000,100000,500000,1000000,5000000,10000000,50000000,100000000,500000000,1500000000])
-        .range(["rgb(247,251,255)", "rgb(222,235,247)", "rgb(198,219,239)", "rgb(158,202,225)", "rgb(107,174,214)", "rgb(66,146,198)","rgb(33,113,181)","rgb(8,81,156)","rgb(8,48,107)","rgb(3,19,43)"]);
 
     var path = d3.geoPath();
 
@@ -221,6 +272,13 @@ function ready(data, path, tip, dataJSON) {
 
     var eu = topojson.feature(data, data.objects.europe).features
 
+    var colorScheme = d3.schemeBlues[6];
+    // colorScheme.unshift("#eee")
+    var color = d3.scaleThreshold()
+    .domain([1, 6, 11, 26, 100])
+    .range(colorScheme);
+
+
     svg = d3.selectAll("#worldmap")
     svg.append("g")
        .attr("class", "countries")
@@ -234,15 +292,19 @@ function ready(data, path, tip, dataJSON) {
        // tooltips
        .style("stroke","white")
        .style("stroke-width", 0.3)
-       // .style("fill", function(d){
-       //   if (d.properties.NAME !=   )
-       // })
+       .style("fill", function(d){
+         if (dataJSON["2007"][d.properties.NAME] == undefined) {
+            return "#cc3300"
+        } else {
+            return (color(dataJSON["2007"][d.properties.NAME]["Share of renewable energy in gross final energy consumption"]))
+        }
+       })
        .on("mouseover",function(d){
            tip.show(d);
            d3.select(this)
              .style("opacity", 1)
              .style("stroke","white")
-             .style("stroke-width",3);
+             .style("stroke-width",2);
         })
         .on('mouseout', function(d){
             tip.hide(d);
@@ -252,12 +314,20 @@ function ready(data, path, tip, dataJSON) {
               .style("stroke-width",0.3);
         })
         .on("click", function(d, i) {
-            console.log(d.properties.NAME)
-            var allData = prepareDataLine(dataJSON, d.properties.NAME)
-            var linechartList = allData[0]
-            var years = allData[1]
-            // makeLineChart(linechartList, years)
-            updateLine(linechartList, years)
+            if (dataJSON["2007"][d.properties.NAME] == undefined) {
+                var country = "European Union (current composition)"
+                var allData = prepareDataLine(dataJSON, country)
+                var linechartList = allData[0]
+                var years = allData[1]
+                updateLine(linechartList, years)
+            } else {
+                console.log(d.properties.NAME)
+                var allData = prepareDataLine(dataJSON, d.properties.NAME)
+                var linechartList = allData[0]
+                var years = allData[1]
+                updateLine(linechartList, years)
+            }
+
         });
 
       // svg.append("path")
