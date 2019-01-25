@@ -45,3 +45,31 @@ but now the graph updates. The next step is the dropdown menu. This will also
 make it possible to select a country and update the line graph. My new
 choice is if I want a line to be present before selecting anything or having
 an empty graph.
+
+## day 9 (21/1)
+The dropdown menu works. All the countries are now in there and the line graph
+updates when a country is selected. Also the slider is implemented. It doesn't
+work with updating the other visualizations, but this will be work for later.
+Also implemented a favicon and glyphicons on the webpage.
+
+## day 10 (22/1)
+Made the piechart. Used the same colors as in the map and the line graph to make
+one whole of the page. Tried to make the piechart updatable, but it doesn't
+work yet.
+
+## day 11 (23/1)
+Made a legend next to the piechart. Also created marges between the glyphicons
+and the text next to them. The dropdown is now positioned in the navbar. This
+couldn't be done with bootstrap or JS only, so I had to combine, which took a
+while. Got text in the piechart and piechart is updatable. Also give an alert
+box when a country without data is selected. jQuery was needed for this.  
+
+I want the tooltip of the map to stay next to the cursor.
+
+## day 12 (24/1)
+Things to do:  
+* Tooltip map (relative)
+* Stacked barchart instead of piechart?
+* Slider
+* Tooltip line graph
+* Tooltip piechart

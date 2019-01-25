@@ -13,8 +13,9 @@ var heightLine = window.innerHeight - marginLine.top - marginLine.bottom - 100;
 
 var minValue = 0;
 var maxValue = 100;
-var minYear = 2007;
-var maxYear = 2016;
+var minYear = "2007";
+var maxYear = "2016";
+var currentYear = "2007";
 
 var xScale = d3.scaleLinear()
                .domain([minYear, maxYear])
@@ -37,90 +38,213 @@ window.onload = function() {
     Promise.all(requests).then(function(response) {
         var jsonEurope = response[0];
         var dataJSON = response[1];
+        var allCountries = Object.keys(dataJSON[minYear]).sort();
 
-        var country = "European Union (current composition)"
+        var country = "European Union"
+
+        var dataDonut = prepareDataDonut(country, currentYear, dataJSON)
 
         var lineData = prepareDataLine(dataJSON, country);
-        var linechartList = lineData[0];
+        var lineGraphList = lineData[0];
         var years = lineData[1];
 
         makeMap(jsonEurope, dataJSON, years);
 
-        // makeDropdown(countries)
+        makeLineGraph(lineGraphList, years);
 
-        makeLineChart(linechartList, years);
+        dropDown(dataJSON, allCountries)
 
-        dropDown(dataJSON)
+        makeSlider(years, dataJSON, jsonEurope)
 
-        // makeDonutChart(year, country)
+        makeDonutChart(dataDonut)
 
 }).catch(function(e){
     throw(e);
 });
 };
 
-function makeSlider() {
-// Time
-  var dataTime = d3.range(0, 10).map(function(d) {
-    return new Date(1995 + d, 10, 3);
-  });
+function updateDonut(dataDonut) {
 
-  var sliderTime = d3
-    .sliderBottom()
-    .min(d3.min(dataTime))
-    .max(d3.max(dataTime))
-    .step(1000 * 60 * 60 * 24 * 365)
-    .width(300)
-    .tickFormat(d3.timeFormat('%Y'))
-    .tickValues(dataTime)
-    .default(new Date(1998, 10, 3))
-    .on('onchange', val => {
-      d3.select('p#value-time').text(d3.timeFormat('%Y')(val));
-    });
+    var colors = d3.scaleOrdinal()
+                   .range(["#bdd7e7", "#6baed6" , "#2171b5"]);
 
-  var gTime = d3
-    .select('div#slider-time')
-    .append('svg')
-    .attr('width', 500)
-    .attr('height', 100)
-    .append('g')
-    .attr('transform', 'translate(30,30)');
+    var arc = d3.arc()
+                .innerRadius(50)
+                .outerRadius(150)
 
-  gTime.call(sliderTime);
+    var data = d3.pie()(dataDonut)
 
-  d3.select('p#value-time').text(d3.timeFormat('%Y')(sliderTime.value()));
+    var newArcs = d3.select(".donutArcs").selectAll("path").data(data)
+
+    // newArcs
+    newArcs.attr("d", arc)
+           .attr("fill", function (d) {
+               return colors(d.data)
+            })
+           .transition()
+           .duration(function(d, i) {
+               return i * 800;
+           })
+           .attrTween('d', function(d) {
+               var i = d3.interpolate(d.startAngle+0.1, d.endAngle);
+               return function(t) {
+                   d.endAngle = i(t);
+                   return arc(d);
+               };
+           });
+
+    var newContent = d3.selectAll(".donutText")
+                       .data(data)
+                       .text(function(d) {
+                           return (d.data + "%")
+                       });
+
+    // updateLegend(dataDonut)
 }
 
-// function for dropdown menu
-function dropDown(dataJSON) {
+function updateMap(dataJSON) {
 
-    var countries = ["European Union", "Belgium", "Germany"]
+    var colorScheme = d3.schemeBlues[6];
+    var color = d3.scaleThreshold()
+                  .domain([1, 6, 11, 26, 40, 100])
+                  .range(colorScheme);
 
-    // make dropdown
-    var select = d3.select("#map")
-                   .append("select")
-  	               .attr("class","select")
-                   .on("change", onchange)
+    var iets = d3.select(".countries").selectAll("path")
+    iets.style("fill", function(d){
+        if (dataJSON[currentYear][d.properties.NAME] == undefined) {
+            return "#969696"
+        } else {
+            console.log(currentYear)
+            return (color(dataJSON[currentYear][d.properties.NAME]["Share of renewable energy in gross final energy consumption"]));
+        }
+    })
+}
 
-    // fill dropdown with years as options
-    var options = select
-        .selectAll("option")
-	    .data(countries).enter()
-	    .append("option")
-		.text(function (d) { return d; })
+function updateLegend(data) {
+    var sectors = ["Transport", "Electricity", "Heating and cooling"];
 
-    // updategraph if other year chosen
-    function onchange() {
-    	var country = d3.select("select").property("value")
-        var allData = prepareDataLine(dataJSON, country)
-        var linechartList = allData[0]
-        var years = allData[1]
-        updateLine(linechartList, years)
+    // make colors scale
+    var colors = d3.scaleOrdinal()
+                   .range(["#bdd7e7", "#6baed6" , "#2171b5"]);
 
-    };
+    var newLegend = d3.selectAll("#donutLegend").data(data)
+
+    newLegend.attr("fill", function (d) {
+                  return colors(d);
+              });
 };
 
-function updateLine(linechartList, years) {
+function makeLegend(data) {
+
+    var sectors = ["Transport", "Electricity", "Heating and cooling"];
+
+    // make colors scale
+    var colors = d3.scaleOrdinal()
+                   .range(["#bdd7e7", "#6baed6" , "#2171b5"]);
+
+    // make group for legends
+    var legends = d3.select(".donut")
+                    .append("g")
+                    .attr("transform", "translate(300, 20)")
+                    .selectAll(".legends")
+                    .data(data)
+
+    // make legend
+    var legend = legends.enter()
+                        .append("g")
+                        .classed("legends", true)
+                        .attr("transform", function(d, i){
+                            return "translate(0," + i*20 +")";
+                        });
+
+    // append circles to legend
+    legend.append("circle")
+          .attr("id", "donutLegend")
+          .attr("cx", 70)
+          .attr("cy", 50)
+          .attr("r", 5)
+          .attr("fill", function (d) {
+              return colors(d);
+          });
+
+    // append text to legend
+    legend.append("text")
+          .attr("x", 80)
+          .attr("y", 52)
+          .attr("id", "legendText")
+          .text(function(d, i){
+              return sectors[i];
+          })
+};
+
+function prepareDataDonut(country, year, dataJSON) {
+    var countryYear = dataJSON[year][country]
+
+    var dataDonut = []
+
+    Object.keys(countryYear).forEach(function(key) {
+        if (key != "Share of renewable energy in gross final energy consumption") {
+            dataDonut.push(countryYear[key])
+        }
+    });
+    return dataDonut;
+}
+
+function makeSlider(years, dataJSON, jsonEurope) {
+
+  var sliderYears = d3.sliderBottom()
+                 .min(d3.min(years))
+                 .max(d3.max(years))
+                 .width(400)
+                 .tickFormat(d3.format(""))
+                 .ticks(10)
+                 .step(1)
+                 .default(minYear)
+                 .on("onchange", val => {
+                     currentYear = val;
+                     var dataDonut = prepareDataDonut("European Union", val, dataJSON);
+                     updateDonut(dataDonut);
+                     updateMap(dataJSON);
+                 });
+
+    var gYears = d3.select("#slider-time")
+                   .append("svg")
+                   .attr("width", widthMap)
+                   .attr("height", 100)
+                   .append("g")
+                   .attr("transform", "translate(30,30)");
+
+    gYears.call(sliderYears);
+
+    // d3.select("#value-step").text(sliderYears.value());
+
+}
+
+function dropDown(dataJSON, countries) {
+    var ul = document.getElementById("country-dropdown")
+    countries.forEach(function(element) {
+        var li = document.createElement("li");
+        li.setAttribute("id", "countryOptions")
+        li.appendChild(document.createTextNode(element));
+        ul.appendChild(li);
+    })
+
+    document.getElementById("country-dropdown").addEventListener("click", function(element) {
+    	var country = element.target.innerText;
+        var checkClick = countries.includes(country)
+        if (countries.includes(country)) {
+            var allData = prepareDataLine(dataJSON, country);
+            var lineGraphList = allData[0];
+            var years = allData[1];
+            updateLine(lineGraphList, years);
+
+            var dataDonut = prepareDataDonut(country, currentYear, dataJSON);
+            updateDonut(dataDonut);
+        };
+    });
+};
+
+function updateLine(lineGraphList, years) {
 
     var line = d3.line()
                  .x(function(d, i) {
@@ -130,21 +254,21 @@ function updateLine(linechartList, years) {
                      return yScale(d)
                  });
 
-    var newLine = d3.select(".linegraph").datum(linechartList);
+    var newLine = d3.select(".linegraph").datum(lineGraphList);
     newLine.transition()
         .duration(500)
         .attr("d", line)
         .style("fill", "none")
         .style("stroke", "black");
 
-    var newDots = d3.selectAll(".dot").data(linechartList);
+    var newDots = d3.selectAll(".dot").data(lineGraphList);
     newDots.transition()
            .duration(500)
            .attr("d", line)
            .attr("cx", function(d, i) { return xScale(years[i]) })
            .attr("cy", function(d) { return yScale(d) })
            .attr("r", 5)
-           .attr("fill", "#FFA500")
+           .attr("fill", "#4292c6")
 
 }
 
@@ -171,7 +295,7 @@ function makeMapSVG() {
     return svg;
 };
 
-function makeLineChart(data, years) {
+function makeLineGraph(data, years) {
 
     var heightSVG = 400;
     var widthSVG = 700;
@@ -213,11 +337,11 @@ function makeLineChart(data, years) {
        .attr("cx", function(d, i) { return xScale(years[i]) })
        .attr("cy", function(d) { return yScale(d) })
        .attr("r", 5)
-       .attr("fill", "#FFA500")
+       .attr("fill", "#4292c6")
        .on("mouseover", function(a, b, c) {
-
-    	})
-        .on("mouseout", function() {  })
+       })
+       .on("mouseout", function() {
+       })
 }
 
 function prepareDataLine(data, country) {
@@ -225,41 +349,107 @@ function prepareDataLine(data, country) {
     var years = Object.keys(dataEn);
     var countriesData = Object.values(dataEn);
 
-    linechartList = []
+    lineGraphList = []
     countriesData.forEach(function(d, i) {
-        linechartList.push(d[country]["Share of renewable energy in gross final energy consumption"])
+        lineGraphList.push(d[country]["Share of renewable energy in gross final energy consumption"])
     });
 
-    return [linechartList, years];
+    return [lineGraphList, years];
 }
 
-function makeDonutChart() {
+function makeDonutChart(dataDonut) {
+    // make color scale and set height
 
+    var colors = d3.scaleOrdinal()
+                   .range(["#bdd7e7", "#6baed6" , "#2171b5"]);
+
+    // var colors = d3.scaleOrdinal(d3.schemePuBuGn[3])
+    var width = 500;
+    var height = 500;
+
+    // make svg for donutchart
+    var svg = d3.select("#donutChart")
+                .append("svg")
+                .attr("class", "donut")
+                .attr("width", width)
+                .attr("height", height)
+
+    // make data for donutchart
+    var data = d3.pie()(dataDonut)
+
+    // make donut
+    var arc = d3.arc()
+                .innerRadius(50)
+                .outerRadius(150)
+
+    // make parts of donut
+    var arcs = svg.append("g")
+                  .attr("class", "donutArcs")
+                  .attr("transform", "translate(250, 250)")
+                  .attr("stroke", "white")
+                  .selectAll("path")
+                  .data(data)
+
+    // fill arcs of donut
+    arcs.enter()
+        .append("path")
+        .attr("d", arc)
+        .attr("fill", function (d) {
+            return colors(d.data)
+        })
+        .transition()
+        .duration(function(d, i) {
+            return i * 800;
+        })
+        .attrTween('d', function(d) {
+            var i = d3.interpolate(d.startAngle+0.1, d.endAngle);
+            return function(t) {
+                d.endAngle = i(t);
+                return arc(d);
+            }
+        })
+
+    // make place for text in donut
+    var content = d3.select(".donutArcs")
+                    .selectAll("text")
+                    .data(data);
+
+    // write text in donut
+    content.enter()
+           .append("text")
+           .attr("class", "donutText")
+           .each(function(d) {
+               var center = arc.centroid(d);
+               d3.select(this)
+                 .attr("x", center[0])
+                 .attr("y", center[1])
+                 .text(d.data + "%")
+           });
+
+    makeLegend(dataDonut)
 }
 
 function makeMap(countries, dataJSON, years) {
-    // var amount = dataJSON["2007"][d.properties.NAME]["Share of renewable energy in gross final energy consumption"]
 
     // Set tooltips
     var tip = d3.tip()
                 .attr("class", "d3-tip")
                 .offset([-10, 0])
                 .html(function(d) {
-                    if (dataJSON[minYear][d.properties.NAME] == undefined) {
+                    if (dataJSON[currentYear][d.properties.NAME] == undefined) {
                         return "<strong>Country: </strong><span class='details'>" + d.properties.NAME + "<br></span>" + "<strong> No data available </strong><span class='details'></span>"
                     } else {
-                        return "<strong>Country: </strong><span class='details'>" + d.properties.NAME + "<br></span>" + "<strong>Share of renewable energy: </strong><span class='details'>" + dataJSON["2007"][d.properties.NAME]["Share of renewable energy in gross final energy consumption"] + "%" + "</span>";
+                        return "<strong>Country: </strong><span class='details'>" + d.properties.NAME + "<br></span>" + "<strong>Share of renewable energy: </strong><span class='details'>" + dataJSON[currentYear][d.properties.NAME]["Share of renewable energy in gross final energy consumption"] + "%" + "</span>";
                     }
                 });
-
 
     var svg = makeMapSVG();
 
     var path = d3.geoPath();
 
     var projection = d3.geoMercator()
-                       .scale(430)
-                       .translate( [widthMap / 2 - 60, heightMap + 270]);
+                       .scale(435)
+                       .translate([widthMap / 2 - 60, heightMap + 280]);
 
     var path = d3.geoPath().projection(projection);
 
@@ -271,12 +461,11 @@ function makeMap(countries, dataJSON, years) {
 function ready(data, path, tip, dataJSON) {
 
     var eu = topojson.feature(data, data.objects.europe).features
-
+    console.log(eu)
     var colorScheme = d3.schemeBlues[6];
-    // colorScheme.unshift("#eee")
     var color = d3.scaleThreshold()
-    .domain([1, 6, 11, 26, 100])
-    .range(colorScheme);
+                  .domain([1, 6, 11, 26, 100])
+                  .range(colorScheme);
 
 
     svg = d3.selectAll("#worldmap")
@@ -290,42 +479,51 @@ function ready(data, path, tip, dataJSON) {
        .style("stroke-width", 1.5)
        .style("opacity",0.8)
        // tooltips
-       .style("stroke","white")
+       .style("stroke","#737373")
        .style("stroke-width", 0.3)
        .style("fill", function(d){
-         if (dataJSON["2007"][d.properties.NAME] == undefined) {
-            return "#cc3300"
-        } else {
-            return (color(dataJSON["2007"][d.properties.NAME]["Share of renewable energy in gross final energy consumption"]))
-        }
+           if (dataJSON[currentYear][d.properties.NAME] == undefined) {
+               return "#969696"
+           } else {
+               return (color(dataJSON[currentYear][d.properties.NAME]["Share of renewable energy in gross final energy consumption"]));
+           }
        })
        .on("mouseover",function(d){
            tip.show(d);
            d3.select(this)
              .style("opacity", 1)
-             .style("stroke","white")
-             .style("stroke-width",2);
+             .style("stroke","#525252")
+             .style("stroke-width",0.5);
         })
         .on('mouseout', function(d){
             tip.hide(d);
             d3.select(this)
               .style("opacity", 0.8)
-              .style("stroke","white")
+              .style("stroke","#737373")
               .style("stroke-width",0.3);
         })
         .on("click", function(d, i) {
-            if (dataJSON["2007"][d.properties.NAME] == undefined) {
-                var country = "European Union (current composition)"
-                var allData = prepareDataLine(dataJSON, country)
-                var linechartList = allData[0]
-                var years = allData[1]
-                updateLine(linechartList, years)
+            if (dataJSON[currentYear][d.properties.NAME] == undefined) {
+                $("#alertCountry").show("fade");
+                setTimeout(function() {
+                    $("#alertCountry").hide("fade");
+                }, 3000);
+                $("#linkClose").click(function() {
+                    $("#alertCountry").hide("fade");
+                });
+                // var country = "European Union";
+                // var allData = prepareDataLine(dataJSON, country);
+                // var lineGraphList = allData[0];
+                // var years = allData[1];
+                // updateLine(lineGraphList, years);
             } else {
-                console.log(d.properties.NAME)
-                var allData = prepareDataLine(dataJSON, d.properties.NAME)
-                var linechartList = allData[0]
-                var years = allData[1]
-                updateLine(linechartList, years)
+                var allLineData = prepareDataLine(dataJSON, d.properties.NAME);
+                var lineGraphList = allLineData[0];
+                var years = allLineData[1];
+                updateLine(lineGraphList, years);
+
+                var dataDonut = prepareDataDonut(d.properties.NAME, currentYear, dataJSON);
+                updateDonut(dataDonut);
             }
 
         });
