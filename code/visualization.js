@@ -3,64 +3,79 @@ Name: Xandra Vos
 Studentnumber: 10731148
 */
 
-var marginMap = {top: -15, right: 0, bottom: 0, left: 0}
-var widthMap = 500 - marginMap.left - marginMap.right
+// Set margins, width and height for map
+var marginMap = {top: -15, right: 0, bottom: 0, left: 0};
+var widthMap = 500 - marginMap.left - marginMap.right;
 var heightMap = 400 - marginMap.top - marginMap.bottom;
 
+// Set margins, width and height for line graph
 var marginLine = {top: 20, right: 50, bottom: 50, left: 50};
 var widthLine = window.innerWidth - marginLine.left - marginLine.right - 200;
 var heightLine = window.innerHeight - marginLine.top - marginLine.bottom - 100;
 
-var minValue = 0;
-var maxValue = 100;
+// Set margins, width and height for barchart
+var marginBar = {top: 50, right: 100, bottom: 50, left: 100};
+var widthBar = 500 - marginBar.left;
+var heightBar = 400 - marginBar.top - marginBar.bottom;
+
+// Set variables for later use
+var sectors = ["Transport", "Electricity", "Heating and cooling"];
 var minYear = "2007";
 var maxYear = "2016";
 var currentYear = "2007";
 var currentCountry = "European Union";
 
+// Create scale functions for barchart
+var xScaled = d3.scaleLinear()
+                .domain([0, 100])
+                .range([marginBar.left, widthBar]);
+
+var yScaled = d3.scaleBand()
+               .domain(sectors)
+               .range([heightBar - marginBar.top, marginBar.top]);
+
+// Create scale functions for line graph
 var xScale = d3.scaleLinear()
                .domain([minYear, maxYear])
                .range([0, widthLine]);
 
 var yScale = d3.scaleLinear()
-               .domain([minValue, maxValue])
+               .domain([0, 100])
                .range([heightLine, marginLine.top]);
 
+// Start function when window loads
 window.onload = function() {
 
-    // requests both queries and waits till all requests are fulfilled
-    var jsonEurope = "https://raw.githubusercontent.com/xandravos/project/master/code/europe.json"
-    var data = "https://raw.githubusercontent.com/xandravos/project/master/scripts/data.json"
-
+    // Requests both queries and waits till all requests are fulfilled
+    var jsonEurope = "https://raw.githubusercontent.com/xandravos/project/master/code/europe.json";
+    var data = "https://raw.githubusercontent.com/xandravos/project/master/scripts/data.json";
     var requests = [d3.json(jsonEurope), d3.json(data)];
     var format = d3.format(",");
 
-    // executes a function
+    // Executes function when all data is received
     Promise.all(requests).then(function(response) {
+
+        // Gets data from function
         var jsonEurope = response[0];
         var dataJSON = response[1];
+
+        // Puts countries in alphabetic order
         var allCountries = Object.keys(dataJSON[minYear]).sort();
 
-        var country = "European Union"
-
-        var dataDonut = prepareDataDonut(country, currentYear, dataJSON)
-        console.log(dataDonut)
-
-        var lineData = prepareDataLine(dataJSON, country);
+        // Prepares data to make line graph
+        var lineData = prepareDataLine(dataJSON, currentCountry);
         var lineGraphList = lineData[0];
         var years = lineData[1];
 
+        // Prepares data for drawing barchart
+        var dataBar = prepareDataBar(currentCountry, currentYear, dataJSON);
+
+        // Runs all functions
         makeMap(jsonEurope, dataJSON, years);
-
+        makeBarchart(dataBar);
+        dropDown(dataJSON, allCountries);
+        makeSlider(years, dataJSON, jsonEurope);
         makeLineGraph(lineGraphList, years);
-
-        dropDown(dataJSON, allCountries)
-
-        makeSlider(years, dataJSON, jsonEurope)
-
-        makeBarchart(dataDonut)
-
-        // makeDonutChart(dataDonut)
 
 }).catch(function(e){
     throw(e);
@@ -108,33 +123,17 @@ function updateDonut(dataDonut) {
 
 function makeBarchart(valuesBar) {
 
-    var sectors = ["Transport", "Electricity", "Heating and cooling"];
-
     var canvasX = 500;
     var canvasY = 400;
-    var width = 400;
-    var height = 300;
-    var xPadding = 100;
-    var yPadding = 50;
     var barPadding = 18;
-    var labelPadding = 40;
-
-    var barMax = d3.max(valuesBar)
-
-    var xScaled = d3.scaleLinear()
-                    .domain([0, 100])
-                    .range([xPadding, width]);
-
-   var yScaled = d3.scaleBand()
-                   .domain(sectors)
-                   .range([height - yPadding, yPadding]);
 
     // make svg in container
-    var svg = d3.select("#donutChart")
+    var svg = d3.select("#barChart")
               .append("svg")
               .attr("width", canvasX)
               .attr("height", canvasY)
               .attr("class", "bars")
+
 
     var colors = d3.scaleOrdinal(d3.schemeSet2);
 
@@ -146,19 +145,19 @@ function makeBarchart(valuesBar) {
        .enter()
        .append("rect")
        .attr("x", function(d, i) {
-           return xPadding;
+           return marginBar.left;
            // return (i * ((width - xPadding)/ valuesBar.length) + xPadding + 1);
        })
        .attr("y", function(d, i) {
            return yScaled(sectors[i]);
        })
        .attr("width", function(d) {
-           return (xScaled(d) - xPadding);
+           return (xScaled(d) - marginBar.left);
            // return (width / valuesBar.length) - barPadding - 50
        })
        .attr("height", function(d) {
            // return (height - yScaled(sectors[i]) - yPadding);
-           return (width / valuesBar.length) - barPadding - 50
+           return (widthBar / valuesBar.length) - barPadding - 50;
        })
        .attr("fill", function(d) {
            return colors(d);
@@ -173,34 +172,34 @@ function makeBarchart(valuesBar) {
      d3.select(".bars")
        .append("g")
        .attr("class", "axis")
-       .attr("transform", "translate(0," + (height - yPadding) + ")")
+       .attr("transform", "translate(0," + (heightBar - marginBar.top) + ")")
        .call(xAxis);
 
      // append x-label
-     // d3.select(".bars")
-     //   .append("text")
-     //   .attr("class", "myLabelX")
-     //   .attr("y", height - 10)
-     //   .attr("x", width / 2)
-     //   .attr('text-anchor', 'middle')
-     //   .text("Sectors");
+     d3.select(".bars")
+       .append("text")
+       .attr("class", "myLabelX")
+       .attr("y", heightBar - 10)
+       .attr("x", widthBar - 150)
+       .attr('text-anchor', 'middle')
+       .text("Share of renewable energy (%)")
 
      // append ticks to y-axis
      d3.select(".bars")
        .append("g")
        .attr("class", "axis")
-       .attr("transform", "translate(" + xPadding + ",0)")
+       .attr("transform", "translate(" + marginBar.left + ",0)")
        .call(yAxis);
 
      // append y-label
-     // d3.select(".bars")
-     //   .append("text")
-     //   .attr("class", "myLabelY")
-     //   .attr("y", 25)
-     //   .attr("x", -150)
-     //   .attr('transform', 'rotate(-90)')
-     //   .attr('text-anchor', 'middle')
-     //   .text("Share of renewable energy (%)")
+     d3.select(".bars")
+       .append("text")
+       .attr("class", "myLabelY")
+       .attr("y", 25)
+       .attr("x", -150)
+       .attr('transform', 'rotate(-90)')
+       .attr('text-anchor', 'middle')
+       .text("Sectors")
 
 };
 
@@ -222,7 +221,6 @@ function updateMap(dataJSON) {
 };
 
 function updateLegend(data) {
-    var sectors = ["Transport", "Electricity", "Heating and cooling"];
 
     // make colors scale
     var colors = d3.scaleOrdinal()
@@ -242,8 +240,6 @@ function makeLegend() {
     var colors = d3.scaleThreshold()
                   .domain([1, 6, 11, 26, 50, 100])
                   .range(colorScheme);
-    // var sectors = ["Transport", "Electricity", "Heating and cooling"];
-
 
     // make group for legends
     var legends = d3.select("#map")
@@ -280,17 +276,17 @@ function makeLegend() {
     //       })
 };
 
-function prepareDataDonut(country, year, dataJSON) {
+function prepareDataBar(country, year, dataJSON) {
     var countryYear = dataJSON[year][country]
 
-    var dataDonut = []
+    var dataBar = []
 
     Object.keys(countryYear).forEach(function(key) {
         if (key != "Share of renewable energy in gross final energy consumption") {
-            dataDonut.push(countryYear[key])
+            dataBar.push(countryYear[key])
         }
     });
-    return dataDonut;
+    return dataBar;
 }
 
 function makeSlider(years, dataJSON, jsonEurope) {
@@ -305,7 +301,7 @@ function makeSlider(years, dataJSON, jsonEurope) {
                  .default(minYear)
                  .on("onchange", val => {
                      currentYear = val;
-                     var dataDonut = prepareDataDonut("European Union", val, dataJSON);
+                     var dataBar = prepareDataBar("European Union", val, dataJSON);
                      d3.select("#barTitle").text("Barchart of " + currentCountry + " in " + currentYear)
                      d3.select("#mapTitle").text("Map of Europe in " + currentYear)
                      // updateDonut(dataDonut);
@@ -346,7 +342,7 @@ function dropDown(dataJSON, countries) {
             var years = allData[1];
             updateLine(lineGraphList, years);
 
-            var dataDonut = prepareDataDonut(country, currentYear, dataJSON);
+            var dataBar = prepareDataBar(country, currentYear, dataJSON);
             // updateDonut(dataDonut);
 
             currentCountry = country;
@@ -657,7 +653,7 @@ function ready(data, path, tip, dataJSON) {
                 var years = allLineData[1];
                 updateLine(lineGraphList, years);
 
-                var dataDonut = prepareDataDonut(d.properties.NAME, currentYear, dataJSON);
+                var dataBar = prepareDataBar(d.properties.NAME, currentYear, dataJSON);
                 currentCountry = d.properties.NAME;
             }
         });

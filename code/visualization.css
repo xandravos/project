@@ -1,8 +1,49 @@
+/*
+Xandra Vos - 10731148
+Minor Programmeren - University of Amsterdam
+Project January 2018
+
+CSS file for style in visualization.html page.
+ */
+
+/* Marges next to glyphicons */
+.glyphicon:before {
+margin-right: 7px;
+}
+
+
+/* Gives padding to top of body and adjusts background color */
 body {
     padding-top: 60px;
     background-color: #f2f2f2;
 }
 
+/* Sets font on navbar */
+.navbar {
+    font-family: verdana;
+}
+
+/* Adjusts dropdown menu in navbar */
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
+/* Styles countries in dropdown menu */
+#countryOptions {
+    font-family: verdana;
+    font-size: 13px;
+    margin-bottom: 9px;
+}
+
+/* Styles country on hover */
+#country-dropdown > li:hover {
+    background-color: #bdd7e7;
+    background-image: none;
+}
+
+/* Styles title above map */
 #mapTitle {
     font-family: verdana;
     font-weight: bold;
@@ -11,6 +52,7 @@ body {
     font-size: 25px;
 }
 
+/* Styles title above bar */
 #barTitle {
     font-family: verdana;
     font-weight: bold;
@@ -19,6 +61,7 @@ body {
     font-size: 25px;
 }
 
+/* Styles title above line graph */
 #lineTitle {
     font-family: verdana;
     font-weight: bold;
@@ -27,13 +70,23 @@ body {
     font-size: 25px;
 }
 
+/* Puts bar chart underneath map if screen too small */
+@media screen {
+  #barChart
+  {
+    float: none;
+    margin-right:0;
+    width:auto;
+  }
+
+/* Style names tooltip map */
 .names {
 fill: none;
 stroke: #fff;
 stroke-linejoin: round;
 }
 
-/* Tooltip CSS */
+/* Tooltip map */
 .d3-tip {
 line-height: 1.5;
 font-weight: 400;
@@ -92,74 +145,50 @@ top: 50%;
 left: 100%;
 }
 
-/* text{
-pointer-events:none;
-} */
-
+/* Data in tooltip map */
 .details{
-color:white;
+color: white;
 }
 
-.glyphicon:before {
-margin-right: 7px;
-}
-
-.myLabelX {
-    font-size: 12px;
-}
-
-.myLabelY {
-    font-size: 12px;
-}
-
+/* Make bars tooltip map */
 .bars {
   float: left;
 }
 
-#legendText {
+/* Styles bar chart label x-axis */
+.myLabelX {
+    font-size: 12px;
+}
+
+/* Styles bar chart label y-axis */
+.myLabelY {
+    font-size: 12px;
+}
+
+
+/* #legendText {
   font-family: verdana;
   font-size: 12px;
-}
+} */
 
-.donutText {
-  fill: white;
-}
-
-.navbar {
-    font-family: verdana;
-}
-
-.scrollable-menu {
-    height: auto;
-    max-height: 200px;
-    overflow-x: hidden;
-}
-
-#countryOptions {
-    font-family: verdana;
-    font-size: 13px;
-    margin-bottom: 9px;
-}
-
-#country-dropdown > li:hover {
-    background-color: #bdd7e7;
-    background-image: none;
-}
-
+/* Make line graph thicker */
 .linegraph {
     stroke-width: 1.5px;
 }
 
-.labelLineY {
-    font-size: 12px;
-    font-family: verdana;
-}
-
+/* Styles line graph label x-axis */
 .labelLineX {
     font-size: 12px;
     font-family: verdana;
 }
 
+/* Styles line graph label y-axis */
+.labelLineY {
+    font-size: 12px;
+    font-family: verdana;
+}
+
+/* Styles tooltip line graph */
 .tooltip {
     position: absolute;
     text-align: left;
@@ -170,6 +199,11 @@ margin-right: 7px;
     border: 0px;
     border-radius: 8px;
 }
+
+/* #footer {
+    background:#525252;
+    color: white;
+} */
 
 /*
   svg {
