@@ -1,10 +1,10 @@
 # Programming Project - Renewable Energy in Europe
 
-Name: Xandra Vos
-Studentnumber: 10731148
+Name: Xandra Vos  
+Studentnumber: 10731148  
 Course: Programmeerproject
 
-[## GitHub Pages](https://xandravos.github.io/project/)
+## [GitHub Pages](https://xandravos.github.io/project/)
 
 ## Purpose
 Climate change is a problem in the world which can't be
@@ -26,11 +26,11 @@ heating and cooling.
 The top of the homepage is shown below. It contains the title with an image
 related to the topic. Above the image it has a navigation bar. This makes is
 possible to go to other html pages when clicked on them.
-![top-home.png]()
+![top-home.png](https://github.com/xandravos/project/blob/master/doc/top-home.png)
 
 The lower part of the homepage is shown below. This contains information and a
 link to the GitHub repository.
-![bottom-home.png]()
+![bottom-home.png](https://github.com/xandravos/project/blob/master/doc/bottom-home.png)
 
 ### Visualizations
 The top of the visualizations page is shown below. It contains the navigation
@@ -45,20 +45,20 @@ and the map. The legend for the barchart and map is placed next to the slider.
 The barchart showes the share of renewable energy consumed in three sectors:
 transport, electricity, and heating and cooling. This also has a tooltip when
 hovering.
-![top-visu.png]()
+![top-visu.png](https://github.com/xandravos/project/blob/master/doc/top-visu.png)
 
 The bottom of the visualizations page is shown below. It contains the line graph
 of a country (default is European Union) from 2007 to 2016. It shows the course
 of the share of sustainable energy of the gross final energy consumption. This
 also contains a tooltip when hovering. When clicked on a dot, the barchart and
 the map will update to the year that is clicked on.
-![bottom-visu.png]()
+![bottom-visu.png](https://github.com/xandravos/project/blob/master/doc/bottom-visu.png)
 
 ### About
 The about page is shown below. It contains the same navigation bar as the other
 pages. It also contains a paragraph about the problem and about the
 visualizations with relating images.
-![about.png]()
+![about.png](https://github.com/xandravos/project/blob/master/doc/about.png)
 
 ## Sources
 The data used in the visualizations comes from [Eurostat](https://ec.europa.eu/eurostat/).
@@ -88,3 +88,9 @@ and [this one](https://bl.ocks.org/duspviz-mit/9b6dce37101c30ab80d0bf378fe5e583)
 * [Glyphicons](https://getbootstrap.com/docs/3.3/components/)
 * [About page first](https://kertupic.pw/alternative-power-sources-The-Earth-And-Climate-Change-in-2018.html)
 * [About page second](https://crm.me/tour/more-features/reports-analytics/beautiful-visualizations/)
+
+<p align="center">
+Copyright 2019 Xandra Vos
+<br>
+Licensed under the terms of the MIT license.
+</p>
