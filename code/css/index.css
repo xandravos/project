@@ -25,10 +25,7 @@ CSS file for style in project.html page.
  /* Sets font on navbar */
  .navbar {
      font-family: verdana;
-     height: 800px;
-    background-image: url("../../doc/windturbines.jpeg");
  }
-
 
  .hero-image {
     height: 800px;
