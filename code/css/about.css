@@ -23,10 +23,10 @@ CSS file for style in about.html page.
      font-family: verdana;
  }
 
- .jumbotron p {
+ #textVis, #textProblem {
      font-size: 15px;
  }
-
+ 
  .jumbotron h2 {
      font-weight: bold;
  }
