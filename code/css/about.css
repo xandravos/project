@@ -22,3 +22,7 @@ CSS file for style in about.html page.
  .navbar {
      font-family: verdana;
  }
+
+ p {
+     font-size: 14px;
+ }
