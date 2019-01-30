@@ -16,6 +16,11 @@ CSS file for style in project.html page.
  body {
      background-color: #f2f2f2;
  }
+ 
+ body, html {
+    height: 100%;
+    margin: 0;
+}
 
  /* Sets font on navbar */
  .navbar {
@@ -30,6 +35,7 @@ CSS file for style in project.html page.
  	background-repeat: no-repeat;
  	background-size: cover;
  	position: relative;
+    height: 500px;
  }
 
  .hero-text {
