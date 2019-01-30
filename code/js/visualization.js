@@ -1,7 +1,13 @@
 /**
 * Name: Xandra Vos
 * Studentnumber: 10731148
+* Minor Programming
+* Final Project
+*
+* JavaScript file to make all the visualizations.
 */
+
+
 
 // Set variables for later use
 var sectors = ["Transport", "Electricity", "Heating and cooling"];
@@ -192,7 +198,7 @@ function makeMap(data, path, tip, dataJSON) {
             }
         });
 
-        // makeLegend()
+        makeLegend()
 };
 
 // Function to make barchart
@@ -289,16 +295,13 @@ function makeBarchart(dataBar) {
        .attr("transform", "translate(" + marginBar.left + ",0)")
        .call(yAxis)
        .selectAll("text")
-       .attr("transform", "rotate(-45)")
-       .attr("y", -10)
 
      // Append y-label
      d3.select(".bars")
        .append("text")
        .attr("class", "myLabelY")
-       .attr("y", marginBar.left - 10)
-       .attr("x", -70)
-       .attr('transform', 'rotate(-90)')
+       .attr("y", 40)
+       .attr("x", marginBar.left)
        .attr('text-anchor', 'middle')
        .text("Sectors");
 };
@@ -470,6 +473,70 @@ function makeSlider(years, dataJSON, jsonEurope) {
     gYears.call(sliderYears);
 };
 
+// Function to make legend
+function makeLegend() {
+
+    // Append SVG to container
+    var svg = d3.select("#legendMap")
+                .append("svg")
+                .attr("class", "legend")
+                .attr("width", widthBar)
+                .attr("height", 100)
+
+
+    // Append a defs element to SVG
+    var defs = svg.append("defs");
+
+    // Append a linearGradient element to the defs
+    var linearGradient = defs.append("linearGradient")
+                             .attr("id", "linear-gradient");
+
+    // Make a horizontal gradient
+    linearGradient.attr("x1", "0%")
+                  .attr("y1", "0%")
+                  .attr("x2", "100%")
+                  .attr("y2", "0%");
+
+    // Set first color for legend
+    linearGradient.append("stop")
+                  .attr("offset", "0%")
+                  .attr("stop-color", "#eff3ff")
+                  .attr("stop-opacity", 1);
+
+    // Set second color for legend
+    linearGradient.append("stop")
+                  .attr("offset", "33%")
+                  .attr("stop-color", "#bdd7e7")
+                  .attr("stop-opacity", 1);
+
+    // Set third color for legend
+    linearGradient.append("stop")
+                  .attr("offset", "66%")
+                  .attr("stop-color", "#6baed6")
+                  .attr("stop-opacity", 1);
+
+    // Set last color for legend
+    linearGradient.append("stop")
+                  .attr("offset", "100%")
+                  .attr("stop-color", "#2171b5")
+                  .attr("stop-opacity", 1);
+
+    // Draw the rectangle and fill with gradient
+    svg.append("rect")
+       .attr("id", "legendRect")
+       .attr("width", 300)
+       .attr("height", 20)
+       .style("fill", "url(#linear-gradient)")
+       .style("stroke", "#cccccc");
+
+       // append text to legend
+      svg.append("text")
+             .attr("x", 20)
+             .attr("y", 40)
+             .attr("id", "legendText")
+             .text("Share of renewable energy (0% - 100%)")
+};
+
 // Function to update map for selected year
 function updateMap(dataJSON) {
 
@@ -596,63 +663,4 @@ function prepareDataLine(data, country) {
     });
 
     return [lineGraphList, years];
-}
-
-// VANAF HIER KAN WAARSCHIJNLIJK WEG
-
-// Function to update legend
-function updateLegend(data) {
-
-    // Set colorscale for legend
-    var colors = d3.scaleOrdinal()
-                   .range(["#bdd7e7", "#6baed6" , "#2171b5"]);
-
-    // Update legend with new data
-    var newLegend = d3.selectAll("#donutLegend").data(data);
-    newLegend.attr("fill", function (d) {
-                  return colors(d);
-             });
-};
-
-// Function to make legend
-function makeLegend() {
-
-    // Set colorscale for legend
-    var colorScheme = d3.schemeBlues[7];
-    var colors = d3.scaleThreshold()
-                  .domain([1, 6, 11, 26, 50, 100])
-                  .range(colorScheme);
-
-    // Make group for legend
-    var legends = d3.select("#map")
-                    .append("g")
-                    .attr("transform", "translate(300, 20)")
-                    .selectAll(".legends")
-
-    // Make legend
-    var legend = legends.enter()
-                        .append("g")
-                        .classed("legends", true)
-                        .attr("transform", function(d, i){
-                            return "translate(0," + i*20 +")";
-                        });
-
-    // Append circles to legend
-    legend.append("circle")
-          .attr("id", "donutLegend")
-          .attr("cx", 70)
-          .attr("cy", 50)
-          .attr("r", 5)
-          .attr("fill", function (d) {
-              return colors(d);
-          });
-
-    // append text to legend
-    // legend.append("text")
-    //       .attr("x", 80)
-    //       .attr("y", 52)
-    //       .attr("id", "legendText")
-    //       .text(function(d, i){
-    //           return sectors[i];
-    //       })
 };

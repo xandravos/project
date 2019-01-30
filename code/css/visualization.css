@@ -6,14 +6,6 @@ Project January 2018
 CSS file for style in visualization.html page.
  */
 
- /* Puts bar chart underneath map if screen too small */
- @media screen {
-     #barChart {
-         float: none;
-         margin-right:0;
-         width:auto;
-     }
-
 /* Marges next to glyphicons */
 .glyphicon:before {
 margin-right: 7px;
@@ -23,6 +15,7 @@ margin-right: 7px;
     display:block;
     margin:0 auto;
 }
+
 /* Gives padding to top of body and adjusts background color */
 body {
     padding-top: 60px;
@@ -79,6 +72,16 @@ body {
     text-align: center;
     color: #525252;
     font-size: 25px;
+}
+
+/* Puts bar chart underneath map if screen too small */
+@media screen {
+    #barChart
+    {
+         float: none;
+         margin-right:0;
+         width:auto;
+    }
 }
 
 /* Style names tooltip map */
@@ -168,11 +171,11 @@ color: white;
     font-size: 12px;
 }
 
-
-/* #legendText {
-  font-family: verdana;
-  font-size: 12px;
-} */
+/* Styles the text underneath the legend */
+#legendText {
+    font-family: verdana;
+    font-size: 12px;
+}
 
 /* Make line graph thicker */
 .linegraph {
@@ -205,7 +208,7 @@ color: white;
     top: 5px;
 }
 
-
+/* Style the tooltip of the bar */
 .tooltipBar {
     position: absolute;
     text-align: left;
@@ -218,15 +221,3 @@ color: white;
     font-family: verdana;
     top: 5px;
 }
-/* #footer {
-    background:#525252;
-    color: white;
-} */
-
-/*
-  svg {
-    border-radius: 6px;
-    background-color: white;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    box-shadow: 0 1px 5px #ddd;
-} */
