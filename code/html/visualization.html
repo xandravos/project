@@ -1,0 +1,87 @@
+<!--
+Name: Xandra Vos
+Studentnumber: 10731148
+Project
+HTML file to post on the local host page.
+-->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Visualization</title>
+        <link rel="icon" href="../../doc/planet-earth.png">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="../d3/d3.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="http://d3js.org/d3.v5.min.js"></script>
+        <script src="http://d3js.org/queue.v1.min.js"></script>
+        <script src="http://d3js.org/topojson.v1.min.js"></script>
+        <script src="../js/d3-tip.js"></script>
+        <script src="https://unpkg.com/d3-simple-slider/build/d3-simple-slider.js"></script>
+        <script src="../js/visualization.js" charset="utf-8"></script>
+        <link rel="stylesheet" type="text/css" href="../css/visualization.css">
+
+
+    </head>
+
+    <body>
+            <nav class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="html/project.html">Renewable Energy</a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="myNavbar">
+                        <ul class="nav navbar-nav">
+                            <li><a href="/html/project.html"><span class="glyphicon glyphicon-home"></span>Home</a></li>
+                            <li class="active"><a href="/html/visualization.html"><span class="glyphicon glyphicon-eye-open"></span>Visualization</a></li>
+                            <li><a href="/html/about.html"><span class="glyphicon glyphicon-info-sign"></span>About</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href=""><span class="glyphicon glyphicon-map-marker"></span>Countries <span class="caret"></span></a>
+                                <ul class="dropdown-menu scrollable-menu" role="menu" id="country-dropdown"></ul>
+                            </li>
+                        </ul>
+                    </div>
+            </nav>
+            <div class="alert alert-warning alert-dismissable collapse" id="alertCountry">
+                <button type="button" class="close" id="linkClose">&times;</button>
+                The selected country has no available data.
+            </div>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6" id="mapTitle">Map of Europe in 2007</div>
+                    <div class="col-sm-6" id="barTitle">Barchart of European Union in 2007</div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-sm-6" id="map"></div>
+                    <div class="col-sm-6" id="barChart"></div>
+                </div>
+            </div>
+
+            <div class="container"
+                <div class="row">
+                    <div class="col-sm" id="slider-time"></div>
+                </div>
+            </div>
+                <br>
+            <div class="container-fluid>"
+                <div class="row">
+                    <div class="col-sm-12" id="lineTitle">Line graph of European Union 2007-2016</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12" id="lineGraph"></div>
+                </div>
+            </div>
+    </body>
+</html>

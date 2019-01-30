@@ -68,25 +68,23 @@ I want the tooltip of the map to stay next to the cursor.
 
 ## day 12 (24/1)
 Slider works. This will now update the piechart and the map. Still have to work
-on the colors of the map. I came to the conclusion that the pie chart is not
-suitable for the data, because those percentages are not a part of the total
-energy consumption, but gives an independent percentage of the share of
-renewable energy in the specific sector. That's why I will have to change this
-to a stacked bar chart.
-
-Things to do next week:  
-* Tooltip map (relative)
-* Tooltip line graph
-* Tooltip piechart
-* Stacked barchart
-* Comments
-* Legend map
+on the colors of the map. All the visualizations are there. Now I have to make
+everything interactive.
 
 ## day 13 (25/1)
-Stacked barchart (+update transitions), comments and legend map.
+I came to the conclusion that the pie chart is not suitable for the data,
+because those percentages are not a part of the total energy consumption, but
+gives an independent percentage of the share of renewable energy in the specific
+sector. That's why I will have to change this to a horizontal barchart.
 
 ## day 14 (28/1)
-Nog invullen
+Changed the piechart to a barchart. I wanted to make a horizontal one, so
+unfortunately it took whole day.
 
 ## day 15 (29/1)
-Nog doen
+Line graph has a tooltip. All html pages are styled. Only the text still has to
+be done. All comments in visualization.js are written. Now I will make it
+suitable for github pages. Also I will have to make quite a few changes.
+
+## day 16 (30/1)
+Gave the homepage a
