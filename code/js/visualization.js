@@ -48,7 +48,7 @@ var yScale = d3.scaleLinear()
 window.onload = function() {
 
     // Requests both queries and waits till all requests are fulfilled
-    var jsonEurope = "https://raw.githubusercontent.com/xandravos/project/master/code/europe.json";
+    var jsonEurope = "https://raw.githubusercontent.com/xandravos/project/master/data/europe.json";
     var data = "https://raw.githubusercontent.com/xandravos/project/master/scripts/data.json";
     var requests = [d3.json(jsonEurope), d3.json(data)];
     var format = d3.format(",");
@@ -72,7 +72,7 @@ window.onload = function() {
         var dataBar = prepareDataBar(currentCountry, currentYear, dataJSON);
 
         // Runs all functions
-        makeMap(jsonEurope, dataJSON, years);
+        prepareMap(jsonEurope, dataJSON, years);
         makeBarchart(dataBar);
         makeLineGraph(lineGraphList, years, dataJSON);
         dropDown(dataJSON, allCountries);
@@ -83,7 +83,8 @@ window.onload = function() {
 });
 };
 
-function makeMap(countries, dataJSON, years) {
+// Function to prepare making map of EU
+function prepareMap(countries, dataJSON, years) {
 
     // Set tooltips
     var tip = d3.tip()
@@ -97,6 +98,7 @@ function makeMap(countries, dataJSON, years) {
                     }
                 });
 
+    // Create SVG for map
     var svg = d3.select("#map")
                 .append("svg")
                 .attr("width", widthMap)
@@ -104,29 +106,35 @@ function makeMap(countries, dataJSON, years) {
                 .append("g")
                 .attr("id", "worldmap");
 
-    var path = d3.geoPath();
-
+    // Make projection
     var projection = d3.geoMercator()
                        .scale(390)
                        .translate([widthMap / 2 - 40, heightMap + 250])
 
+    // Create path for drawing map
     var path = d3.geoPath()
                  .projection(projection)
 
+    // Call tip
     svg.call(tip);
 
-    ready(countries, path, tip, dataJSON)
+    // Make map
+    makeMap(countries, path, tip, dataJSON)
 }
 
-function ready(data, path, tip, dataJSON) {
+// Function to make map of EU
+function makeMap(data, path, tip, dataJSON) {
 
+    // Get the right features of countries
     var eu = topojson.feature(data, data.objects.europe).features
+
+    // Create colorscale
     var colorScheme = d3.schemeBlues[7];
     var color = d3.scaleThreshold()
                   .domain([1, 6, 11, 26, 50, 100])
                   .range(colorScheme);
 
-
+    // Append path to map svg and make interactive
     svg = d3.selectAll("#worldmap")
     svg.append("g")
        .attr("class", "countries")
@@ -171,15 +179,16 @@ function ready(data, path, tip, dataJSON) {
                     $("#alertCountry").hide("fade");
                 });
             } else {
-                d3.select("#barTitle").text("Barchart of " + d.properties.NAME + " in " + currentYear)
-                d3.select("#lineTitle").text("Line graph of " + d.properties.NAME + " 2007-2016")
-                var allLineData = prepareDataLine(dataJSON, d.properties.NAME);
+                currentCountry = d.properties.NAME;
+                d3.select("#barTitle").text("Barchart of " + currentCountry + " in " + currentYear)
+                d3.select("#lineTitle").text("Line graph of " + currentCountry + " 2007-2016")
+                var allLineData = prepareDataLine(dataJSON, currentCountry);
                 var lineGraphList = allLineData[0];
                 var years = allLineData[1];
                 updateLine(lineGraphList, years);
 
-                var dataBar = prepareDataBar(d.properties.NAME, currentYear, dataJSON);
-                currentCountry = d.properties.NAME;
+                var dataBar = prepareDataBar(currentCountry, currentYear, dataJSON);
+                updateBar(dataBar)
             }
         });
 
@@ -221,17 +230,14 @@ function makeBarchart(dataBar) {
        .append("rect")
        .attr("x", function(d, i) {
            return marginBar.left;
-           // return (i * ((width - xPadding)/ valuesBar.length) + xPadding + 1);
        })
        .attr("y", function(d, i) {
            return yScaled(sectors[i]);
        })
        .attr("width", function(d) {
            return (xScaled(d) - marginBar.left);
-           // return (width / valuesBar.length) - barPadding - 50
        })
        .attr("height", function(d) {
-           // return (height - yScaled(sectors[i]) - yPadding);
            return (widthBar / dataBar.length) - barPadding;
        })
        .attr("fill", function(d) {
@@ -244,8 +250,7 @@ function makeBarchart(dataBar) {
                   .duration(300)
                   .style("opacity", .9)
           tooltip.html("<strong>Sector: </strong><span class='details'>" + sectors[i] + "<br></span>" + "<strong>Share: </strong><spand class='details'></span>" + d + "%")
-                 .style("right", (d3.event.pageX) + "px")
-                 // .style("top", (d3.event.pageY) - "px")
+                 .style("right", (d3.event.pageX) + "px" + "px")
         })
         .on("mouseout", function (){
             d3.select(this)
@@ -421,7 +426,7 @@ function dropDown(dataJSON, countries) {
 
             // Update barchart
             var dataBar = prepareDataBar(country, currentYear, dataJSON);
-            // updateDonut(dataDonut);
+            updateBar(dataBar)
 
             // Update line graph
             var allData = prepareDataLine(dataJSON, country);
@@ -487,15 +492,17 @@ function updateMap(dataJSON) {
 
 // Function to update barchart for selected country and year
 function updateBar(dataBar) {
+
     // Set colorscale for map
     var colorScheme = d3.schemeBlues[7];
     var colors = d3.scaleThreshold()
                   .domain([1, 6, 11, 26, 50, 100])
                   .range(colorScheme);
 
+    // Give new data to bar
     var newBar = d3.selectAll(".bars").selectAll("rect").data(dataBar);
     newBar.transition()
-          .duration(200)
+          .duration(300)
           .attr("fill", function(d) {
               return colors(d);
           })
