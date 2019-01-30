@@ -65,6 +65,8 @@ The data used in the visualizations comes from [Eurostat](https://ec.europa.eu/e
 The file used for this visualization can be found [here](https://ec.europa.eu/eurostat/tgm/refreshTableAction.do?tab=table&plugin=1&pcode=sdg_07_40&language=en).
 
 ### Code
+The sources used for the code are listed below. The listed sources can have
+their own respective licenses.
 * Map: [JavaScript code making map and tooltip](http://bl.ocks.org/micahstubbs/8e15870eb432a21f0bc4d3d527b2d14f),
 [europe.json](https://raw.githubusercontent.com/leakyMirror/map-of-europe/master/TopoJSON/europe.topojson).
 * Legend: a combination of [this one](https://www.visualcinnamon.com/2016/05/smooth-color-legend-d3-svg-gradient.html)
