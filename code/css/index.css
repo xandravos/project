@@ -28,7 +28,7 @@ CSS file for style in project.html page.
  }
 
  .hero-image {
-    height: 550px;
+    height: 600px;
  	background-image: url("../../doc/windturbines.jpeg");
  	background-position: center;
  	background-repeat: no-repeat;
@@ -42,4 +42,8 @@ CSS file for style in project.html page.
  	top: 50%;
  	left: 50%;
  	color: white;
+ }
+
+ h3, h4, p {
+     text-align: center;
  }
