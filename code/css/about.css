@@ -23,6 +23,10 @@ CSS file for style in about.html page.
      font-family: verdana;
  }
 
- p {
-     font-size: 14px;
+ .jumbotron p {
+     font-size: 12px;
+ }
+
+ .jumbotron h2 {
+     font-weight: bold;
  }
