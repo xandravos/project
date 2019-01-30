@@ -25,25 +25,25 @@ CSS file for style in project.html page.
  /* Sets font on navbar */
  .navbar {
      font-family: verdana;
+     height: 800px;
+    background-image: url("../../doc/windturbines.jpeg");
  }
 
 
  .hero-image {
-    height: 500px;
+    height: 800px;
  	background-image: url("../../doc/windturbines.jpeg");
- 	height: 90.1%;
  	background-position: center;
  	background-repeat: no-repeat;
  	background-size: cover;
  	position: relative;
-
- }
+}
 
  .hero-text {
  	text-align: center;
  	position: absolute;
  	top: 50%;
  	left: 50%;
- 	transform: translate(-50%, -50%);
+ 	/* transform: translate(-50%, -50%); */
  	color: white;
  }
