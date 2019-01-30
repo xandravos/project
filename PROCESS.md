@@ -82,9 +82,11 @@ Changed the piechart to a barchart. I wanted to make a horizontal one, so
 unfortunately it took whole day.
 
 ## day 15 (29/1)
-Line graph has a tooltip. All html pages are styled. Only the text still has to
-be done. All comments in visualization.js are written. Now I will make it
-suitable for github pages. Also I will have to make quite a few changes.
+Line graph and barchart have tooltips. All html pages are styled. Only the text
+still has to be done. All comments in visualization.js are written. Now I will
+make it suitable for GitHub Pages. Also I will have to make quite a few changes.
 
 ## day 16 (30/1)
-Gave the homepage a
+Gave the homepage a background. Completed the barchart and made it updatable.
+Made everything compatible for GitHub Pages. Did all the final touches. Added
+text and images. When clicked on dot on line graph, the rest will update.
