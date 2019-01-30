@@ -27,6 +27,10 @@ CSS file for style in about.html page.
      font-size: 15px;
  }
 
- h2 {
+ #textVis, #textProblem h2 {
+     font-weight: bold;
+ }
+
+ .h2 {
      font-weight: bold;
  }
