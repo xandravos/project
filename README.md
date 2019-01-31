@@ -6,6 +6,8 @@ Course: Programmeerproject
 
 ## [GitHub Pages](https://xandravos.github.io/project/)
 
+## [Product Video](https://youtu.be/h_hzxvu8Hh4)
+
 ## Purpose
 Climate change is a problem in the world which can't be
 avoided anymore. That's why a lot of countries try to
