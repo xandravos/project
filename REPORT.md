@@ -58,14 +58,14 @@ importance order. So all the preparing data functions are at the bottom of the
 file, the making of the visualizations functions are at the top and the
 functions to update the visualizations are in the middle.
 
-**General functions**
+##### General functions
 * window.onload - this makes it possible to make sure the functions run after
 the page is loaded so it doesn't happen at the same time.
 
 * Promise.all() - this makes sure the files needed for the visualizations are
 found and loaded before starting the rest of the functions.
 
-**Prepare data**
+##### Prepare data
 * prepareDataBar() - this function prepares the data to be used for the barchart.
 It has three arguments: country, year, dataJSON. The country and the year are
 chosen at first (European Union, 2007) and can be changed by the user. The dataJSON
@@ -78,7 +78,7 @@ but can be changed by the user. Data is the same as at the prepareDataBar()
 function. The function returns an array with a length of 10 (for all years a
 value) and all years to use for the x-axis.
 
-**Make visualizations**
+##### Make visualizations
 * prepareMap() - this function prepares everything before start making the map.
 It creates the tooltip, svg, projection, path and then calls the makeMap()
 function.
@@ -108,7 +108,7 @@ barchart, and their titles update when a new year is selected
 * makeLegend() - this function creates the legend for the barchart and the map
 because both have the same colorscale.
 
-**Update visualizations**
+##### Update visualizations
 * updateMap() - this function updates the map when another year is selected in
 the slider or in the line graph.
 
